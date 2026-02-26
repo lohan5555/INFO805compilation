@@ -21,8 +21,12 @@ class ArbreIdent extends Arbre {
     String nom;
     public ArbreIdent(String n) { this.nom = n; }
     public String toString() { return nom; }
-    public void genCode(CodeGen gen){
-        gen.emit("mov eax, " + nom);
+    public void genCode(CodeGen gen) {
+        if (nom.equalsIgnoreCase("input")) {
+            gen.emit("in eax");
+        } else {
+            gen.emit("mov eax, " + nom);
+        }
     }
 }
 
@@ -49,6 +53,31 @@ class ArbreBinaire extends Arbre {
             return;
         }
 
+        if (operateur.equals("WHILE")) {
+            String start = gen.newLabel("debut_while");
+            String end = gen.newLabel("fin_while");
+            gen.emitWithoutTab(start + ":");
+            gauche.genCode(gen); // La condition met 1 ou 0 dans eax
+            gen.emit("jz " + end);
+            droite.genCode(gen);
+            gen.emit("jmp " + start);
+            gen.emitWithoutTab(end + ":");
+            return; // Très important !
+        }
+
+        if (operateur.equals("IF")) {
+            String elseLbl = gen.newLabel("else");
+            String finLbl = gen.newLabel("fin_if");
+            gauche.genCode(gen);
+            gen.emit("jz " + elseLbl);
+            ((ArbreBinaire) droite).gauche.genCode(gen);
+            gen.emit("jmp " + finLbl);
+            gen.emitWithoutTab(elseLbl + ":");
+            ((ArbreBinaire) droite).droite.genCode(gen);
+            gen.emitWithoutTab(finLbl + ":");
+            return;
+        }
+
         gauche.genCode(gen);     // eax = gauche
         gen.emit("push eax");
 
@@ -70,6 +99,25 @@ class ArbreBinaire extends Arbre {
                 gen.emit("div ebx, eax");
                 gen.emit("mov eax, ebx");
                 break;
+            case "%":
+                gen.emit("mov ecx, eax");
+                gen.emit("mov eax, ebx");
+                gen.emit("div ebx, ecx");
+                gen.emit("mul ebx, ecx");
+                gen.emit("sub eax, ebx");
+                break;
+            case "<":
+                String vrai = gen.newLabel("vrai");
+                String fin  = gen.newLabel("fin");
+
+                gen.emit("sub ebx, eax");
+                gen.emit("jl " + vrai);
+                gen.emit("mov eax, 0");
+                gen.emit("jmp " + fin);
+                gen.emitWithoutTab(vrai + ":");
+                gen.emit("mov eax, 1");
+                gen.emitWithoutTab(fin + ":");
+                break;
         }
     }
 }
@@ -88,7 +136,14 @@ class ArbreUnaire extends Arbre {
         return "(" + operateur + " " + expression.toString() + ")";
     }
 
-    public void genCode(CodeGen gen) {}
+    public void genCode(CodeGen gen) {
+    if (operateur.equals("OUTPUT")) {
+        expression.genCode(gen);
+        gen.emit("out eax");
+    } else if (operateur.equals("INPUT")) {
+        gen.emit("in eax");
+    }
+}
 }
 
 // Pour la déclaration LET (spécifique car identifiant à gauche)
