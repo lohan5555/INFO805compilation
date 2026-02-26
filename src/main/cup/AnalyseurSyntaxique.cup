@@ -77,8 +77,8 @@ expr ::= NOT:op expr:e         {: RESULT = new ArbreUnaire("NOT", e); :}
        | expr:e1 AND expr:e2   {: RESULT = new ArbreBinaire("AND", e1, e2); :}
        | expr:e1 OR expr:e2    {: RESULT = new ArbreBinaire("OR", e1, e2); :}
        | expr:e1 EGAL expr:e2  {: RESULT = new ArbreBinaire("=", e1, e2); :}
-       | expr:e1 GT expr:e2    {: RESULT = new ArbreBinaire(">", e1, e2); :}
-       | expr:e1 GTE expr:e2   {: RESULT = new ArbreBinaire(">=", e1, e2); :}
+       | expr:e1 GT expr:e2    {: RESULT = new ArbreBinaire("<", e1, e2); :}
+       | expr:e1 GTE expr:e2   {: RESULT = new ArbreBinaire("<=", e1, e2); :}
        | expr:e1 PLUS expr:e2  {: RESULT = new ArbreBinaire("+", e1, e2); :}
        | expr:e1 MOINS expr:e2 {: RESULT = new ArbreBinaire("-", e1, e2); :}
        | expr:e1 MUL expr:e2   {: RESULT = new ArbreBinaire("*", e1, e2); :}
