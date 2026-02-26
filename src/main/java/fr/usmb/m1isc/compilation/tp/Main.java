@@ -23,6 +23,14 @@ public class Main {
         
         // On récupère la racine de l'arbre (qui est dans result.value)
         Arbre arbre = (Arbre) result.value;
+
+        CodeGen gen = new CodeGen();
+        arbre.genCode(gen);
+    
+        try (PrintWriter writer = new PrintWriter(new FileWriter("asm.txt"))) {
+            writer.println(gen.getProgram());
+        }
+        System.out.println(gen.getProgram());
         
         // On affiche l'arbre
         if (arbre != null) {
