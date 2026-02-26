@@ -71,3 +71,11 @@ while (0 < b)
 do (let aux=(a mod b); let a=b; let b=aux );
 output a .
 ```
+
+
+
+```
+./gradlew build -x test
+
+java -jar build/libs/compilationTp3-4.jar .\fichier_test.txt
+```
