@@ -25,9 +25,11 @@ public class Main {
         Arbre arbre = (Arbre) result.value;
 
         CodeGen gen = new CodeGen();
+        //on génère le code en assembleur
         arbre.genCode(gen);
     
-        try (PrintWriter writer = new PrintWriter(new FileWriter("asm.txt"))) {
+        //on enregistre le résultat dans un fichier
+        try (PrintWriter writer = new PrintWriter(new FileWriter("pgcd.asm"))) {
             writer.println(gen.getProgram());
         }
         System.out.println(gen.getProgram());

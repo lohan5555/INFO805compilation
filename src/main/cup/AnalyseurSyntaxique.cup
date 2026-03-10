@@ -31,7 +31,7 @@ parser code {:
 :};
 
 /* symboles terminaux */
-terminal PLUS, MOINS, MOINS_UNAIRE, MUL, DIV, MOD, NOT, OR, AND, PAR_G, PAR_D, SEMI, POINT, LET, INPUT, OUTPUT, IF, THEN, ELSE, WHILE, DO, EGAL, GT, GTE, NIL, ERROR; 
+terminal PLUS, MOINS, MOINS_UNAIRE, MUL, DIV, MOD, NOT, OR, AND, PAR_G, PAR_D, SEMI, POINT, LET, INPUT, OUTPUT, IF, THEN, ELSE, WHILE, DO, EGAL, GT, GTE, LT, LTE, NIL, ERROR; 
 terminal Integer ENTIER;
 terminal String IDENT;
 /* non terminaux */
@@ -41,8 +41,7 @@ precedence nonassoc OUTPUT;
 precedence right OR;
 precedence right AND;
 precedence right NOT;
-precedence nonassoc EGAL;
-precedence nonassoc GT, GTE;
+precedence nonassoc EGAL, GT, GTE, LT, LTE;
 precedence left PLUS, MOINS;
 precedence left MUL, DIV, MOD;
 precedence left MOINS_UNAIRE;
@@ -59,17 +58,12 @@ sequence ::= expression:e1 SEMI sequence:e2 {: RESULT = new ArbreBinaire(";", e1
            | /* vide */     {: RESULT = null; :}
            ;
 
-// une expession est soit une affectation ,une              
+// une expession est soit une affectation, soit une déclaration, soit une boucle WHILE, soit un IF THEN ELSE         
 expression ::= expr:e {: RESULT = e; :}
              | LET IDENT:nom EGAL expr:e       {: RESULT = new ArbreLet(nom, e); :}
              | WHILE expr:cond DO expression:e {: RESULT = new ArbreBinaire("WHILE", cond, e); :}
-             // IF THEN ELSE est un opérateur ternaire, on peut tricher avec un arbre binaire imbriqué ou créer une classe ArbreIf
-             | IF expr:cond THEN expression:a1 ELSE expression:a2 
-               {: 
-                  // On représente ça comme (IF condition (THEN_ELSE a1 a2))
-                  RESULT = new ArbreBinaire("IF", cond, new ArbreBinaire("THEN_ELSE", a1, a2)); 
-               :}
-             | error // reprise d'erreurs
+             | IF expr:cond THEN expression:a1 ELSE expression:a2 {:  RESULT = new ArbreBinaire("IF", cond, new ArbreBinaire("THEN_ELSE", a1, a2)); :}
+             | error
              ;
 
 // expression arithmetiques et logiques 
@@ -77,8 +71,10 @@ expr ::= NOT:op expr:e         {: RESULT = new ArbreUnaire("NOT", e); :}
        | expr:e1 AND expr:e2   {: RESULT = new ArbreBinaire("AND", e1, e2); :}
        | expr:e1 OR expr:e2    {: RESULT = new ArbreBinaire("OR", e1, e2); :}
        | expr:e1 EGAL expr:e2  {: RESULT = new ArbreBinaire("=", e1, e2); :}
-       | expr:e1 GT expr:e2    {: RESULT = new ArbreBinaire("<", e1, e2); :}
-       | expr:e1 GTE expr:e2   {: RESULT = new ArbreBinaire("<=", e1, e2); :}
+       | expr:e1 GT expr:e2    {: RESULT = new ArbreBinaire(">", e1, e2); :}
+       | expr:e1 GTE expr:e2   {: RESULT = new ArbreBinaire(">=", e1, e2); :}
+       | expr:e1 LT expr:e2    {: RESULT = new ArbreBinaire("<", e1, e2); :}
+       | expr:e1 LTE expr:e2   {: RESULT = new ArbreBinaire("<=", e1, e2); :}
        | expr:e1 PLUS expr:e2  {: RESULT = new ArbreBinaire("+", e1, e2); :}
        | expr:e1 MOINS expr:e2 {: RESULT = new ArbreBinaire("-", e1, e2); :}
        | expr:e1 MUL expr:e2   {: RESULT = new ArbreBinaire("*", e1, e2); :}

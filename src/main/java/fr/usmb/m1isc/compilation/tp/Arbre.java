@@ -62,7 +62,7 @@ class ArbreBinaire extends Arbre {
             droite.genCode(gen);
             gen.emit("jmp " + start);
             gen.emitWithoutTab(end + ":");
-            return; // Très important !
+            return;
         }
 
         if (operateur.equals("IF")) {
@@ -83,6 +83,9 @@ class ArbreBinaire extends Arbre {
 
         droite.genCode(gen);     // eax = droite
         gen.emit("pop ebx");     // ebx = gauche
+
+        String vrai;
+        String fin;
 
         switch (operateur) {
             case "+":
@@ -107,17 +110,56 @@ class ArbreBinaire extends Arbre {
                 gen.emit("sub eax, ebx");
                 break;
             case "<":
-                String vrai = gen.newLabel("vrai");
-                String fin  = gen.newLabel("fin");
+                vrai = gen.newLabel("vrai");
+                fin  = gen.newLabel("fin");
 
                 gen.emit("sub ebx, eax");
-                gen.emit("jl " + vrai);
+                gen.emit("jl " + vrai);  // jump if less
                 gen.emit("mov eax, 0");
                 gen.emit("jmp " + fin);
                 gen.emitWithoutTab(vrai + ":");
                 gen.emit("mov eax, 1");
                 gen.emitWithoutTab(fin + ":");
                 break;
+            case ">": {
+                vrai = gen.newLabel("vrai_sup");
+                fin  = gen.newLabel("fin_sup");
+
+                gen.emit("sub ebx, eax");
+                gen.emit("jg " + vrai);   // jump if greater
+                gen.emit("mov eax, 0");
+                gen.emit("jmp " + fin);
+                gen.emitWithoutTab(vrai + ":");
+                gen.emit("mov eax, 1");
+                gen.emitWithoutTab(fin + ":");
+                break;
+            }
+            case ">=": {
+                vrai = gen.newLabel("vrai_sup_egal");
+                fin  = gen.newLabel("fin_sup_egal");
+
+                gen.emit("sub ebx, eax");
+                gen.emit("jge " + vrai);  // jump if greater or equal
+                gen.emit("mov eax, 0");
+                gen.emit("jmp " + fin);
+                gen.emitWithoutTab(vrai + ":");
+                gen.emit("mov eax, 1");
+                gen.emitWithoutTab(fin + ":");
+                break;
+            }
+            case "<=": {
+                vrai = gen.newLabel("vrai_inf_egal");
+                fin  = gen.newLabel("fin_inf_egal");
+
+                gen.emit("sub ebx, eax");
+                gen.emit("jle " + vrai);  // jump if less or equal
+                gen.emit("mov eax, 0");
+                gen.emit("jmp " + fin);
+                gen.emitWithoutTab(vrai + ":");
+                gen.emit("mov eax, 1");
+                gen.emitWithoutTab(fin + ":");
+                break;
+            }
         }
     }
 }

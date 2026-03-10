@@ -1,0 +1,44 @@
+DATA SEGMENT
+	a DD
+	b DD
+	aux DD
+DATA ENDS
+
+CODE SEGMENT
+	in eax
+	mov a, eax
+	in eax
+	mov b, eax
+debut_while_0:
+	mov eax, 0
+	push eax
+	mov eax, b
+	pop ebx
+	sub ebx, eax
+	jge vrai_sup_egal_2
+	mov eax, 0
+	jmp fin_sup_egal_3
+vrai_sup_egal_2:
+	mov eax, 1
+fin_sup_egal_3:
+	jz fin_while_1
+	mov eax, a
+	push eax
+	mov eax, b
+	pop ebx
+	mov ecx, eax
+	mov eax, ebx
+	div ebx, ecx
+	mul ebx, ecx
+	sub eax, ebx
+	mov aux, eax
+	mov eax, b
+	mov a, eax
+	mov eax, aux
+	mov b, eax
+	jmp debut_while_0
+fin_while_1:
+	mov eax, a
+	out eax
+CODE ENDS
+

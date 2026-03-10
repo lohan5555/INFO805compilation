@@ -23,8 +23,8 @@ import java_cup.runtime.Symbol;
 
 chiffre     = [0-9]
 espace      = \s
-mod         = "%" | "mod"|"MOD"
-let         = "let"|"LET"
+mod         = "%" | "mod" | "MOD"
+let         = "let" | "LET"
 while       = "while" | "WHILE"
 do          = "do" | "DO"
 if          = "if" | "IF"
@@ -61,8 +61,10 @@ comment     = {comment1}|{comment2}
 {or}        { return new Symbol(sym.OR, yyline, yycolumn) ;}
 {not}       { return new Symbol(sym.NOT, yyline, yycolumn) ;}
 "="         { return new Symbol(sym.EGAL, yyline, yycolumn) ;}
-"<"         { return new Symbol(sym.GT, yyline, yycolumn) ;}
-"<="        { return new Symbol(sym.GTE, yyline, yycolumn) ;}
+">"         { return new Symbol(sym.GT, yyline, yycolumn) ;}
+">="        { return new Symbol(sym.GTE, yyline, yycolumn) ;}
+"<"         { return new Symbol(sym.LT, yyline, yycolumn) ;}
+"<="        { return new Symbol(sym.LTE, yyline, yycolumn) ;}
 "("         { return new Symbol(sym.PAR_G, yyline, yycolumn) ;}
 ")"         { return new Symbol(sym.PAR_D, yyline, yycolumn) ;}
 "+"         { return new Symbol(sym.PLUS, yyline, yycolumn) ;}
