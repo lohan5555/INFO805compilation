@@ -34,3 +34,7 @@
 # IntelliJ SonarLint plugin
 .idea/sonarlint/
 
+# output file
+code_compile.asm
+arbre.txt
+

@@ -1,1 +1,0 @@
-(; (LET a INPUT) (; (LET b INPUT) (; (WHILE (>= 0 b) (; (LET aux (% a b)) (; (LET a b) (LET b aux)))) (OUTPUT a))))

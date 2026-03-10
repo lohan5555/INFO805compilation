@@ -29,7 +29,7 @@ public class Main {
         arbre.genCode(gen);
     
         //on enregistre le résultat dans un fichier
-        try (PrintWriter writer = new PrintWriter(new FileWriter("pgcd.asm"))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("code_compile.asm"))) {
             writer.println(gen.getProgram());
         }
         System.out.println(gen.getProgram());
