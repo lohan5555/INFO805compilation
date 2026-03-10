@@ -12,7 +12,7 @@ class ArbreEntier extends Arbre {
     public ArbreEntier(int v) { this.valeur = v; }
     public String toString() { return String.valueOf(valeur); }
     public void genCode(CodeGen gen){
-        gen.emit("mov eax, " + valeur);
+        gen.emit("mov eax, " + valeur);   // on met "valeur" dans eax
     }
 }
 
@@ -25,7 +25,7 @@ class ArbreIdent extends Arbre {
         if (nom.equalsIgnoreCase("input")) {
             gen.emit("in eax");
         } else {
-            gen.emit("mov eax, " + nom);
+            gen.emit("mov eax, " + nom);  // on met nom dans eax
         }
     }
 }
@@ -58,7 +58,7 @@ class ArbreBinaire extends Arbre {
             String end = gen.newLabel("fin_while");
             gen.emitWithoutTab(start + ":");
             gauche.genCode(gen); // La condition met 1 ou 0 dans eax
-            gen.emit("jz " + end);
+            gen.emit("jz " + end); // jump if zero
             droite.genCode(gen);
             gen.emit("jmp " + start);
             gen.emitWithoutTab(end + ":");
@@ -69,7 +69,7 @@ class ArbreBinaire extends Arbre {
             String elseLbl = gen.newLabel("else");
             String finLbl = gen.newLabel("fin_if");
             gauche.genCode(gen);
-            gen.emit("jz " + elseLbl);
+            gen.emit("jz " + elseLbl);  // jump if zero
             ((ArbreBinaire) droite).gauche.genCode(gen);
             gen.emit("jmp " + finLbl);
             gen.emitWithoutTab(elseLbl + ":");
@@ -78,14 +78,16 @@ class ArbreBinaire extends Arbre {
             return;
         }
 
-        gauche.genCode(gen);     // eax = gauche
-        gen.emit("push eax");
+        gauche.genCode(gen);     
+        gen.emit("push eax");  // Pose la valeur de eax sur le sommet d'une pile
 
-        droite.genCode(gen);     // eax = droite
-        gen.emit("pop ebx");     // ebx = gauche
+        droite.genCode(gen);     
+        gen.emit("pop ebx");   // Récupère la dernière valeur posée sur la pile et la met dans ebx
 
         String vrai;
         String fin;
+
+        // A ce stade, eax = gauche et eax = droite, on est pret pour faire nos opérations
 
         switch (operateur) {
             case "+":
