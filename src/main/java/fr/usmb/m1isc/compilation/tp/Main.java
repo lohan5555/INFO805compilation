@@ -35,18 +35,14 @@ public class Main {
         System.out.println(gen.getProgram());
         
         // On affiche l'arbre
-        if (arbre != null) {
-            String ast = arbre.toString();
+        String ast = arbre.toString();
+        System.out.println(ast);
 
-            System.out.println(ast);
-
-            // Écriture dans le fichier arbre.txt
-            try (PrintWriter writer = new PrintWriter(new FileWriter("arbre.txt"))) {
-                writer.println(ast);
-            }
-
-        } else {
-            System.out.println("Arbre vide ou erreur d'analyse.");
+        // Écriture dans le fichier arbre.txt
+        try (PrintWriter writer = new PrintWriter(new FileWriter("arbre.txt"))) {
+            writer.println(ast);
         }
+
+        
     }
 }
